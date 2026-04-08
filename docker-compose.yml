@@ -1,0 +1,18 @@
+services:
+  db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: password_maestra
+      MARIADB_DATABASE: CentroAdopcion
+      MARIADB_USER: user_perro
+      MARIADB_PASSWORD: password123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./static/uploads/dogs:/app/static/uploads/dogs
+
+# ESTO ES LO QUE FALTA (sin espacios a la izquierda):
+volumes:
+  db_data:

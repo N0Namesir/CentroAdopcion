@@ -1,0 +1,380 @@
+{% extends "layout.html" %}
+
+{% block title %}Administración — AdoptaPets{% endblock %}
+
+{% block extra_styles %}
+/* ── Hero de admin ───────────────────────────────────────── */
+.admin-hero {
+  background: linear-gradient(135deg, var(--accent-deeper) 0%, #3B2212 100%);
+  padding: 2.5rem 0 2rem;
+  margin-bottom: 2.5rem;
+}
+.admin-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+.admin-hero__subtitle {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.95rem;
+}
+
+/* ── Stat cards ──────────────────────────────────────────── */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-card);
+}
+.stat-card__icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.stat-card__icon--orange { background: var(--accent-soft); }
+.stat-card__icon--green  { background: var(--green-light); }
+.stat-card__icon--brown  { background: #F3E8DC; }
+.stat-card__value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent-deeper);
+  line-height: 1;
+}
+.stat-card__label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ── Section headers ─────────────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-deeper);
+  margin: 0;
+}
+.section-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--accent-soft);
+  color: var(--accent-deeper);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ── Panel cards ─────────────────────────────────────────── */
+.panel-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.panel-card__body { padding: 1.5rem; }
+
+/* ── ID chip ─────────────────────────────────────────────── */
+.id-chip {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background: var(--cream);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+/* ── Empty table ─────────────────────────────────────────── */
+.table-empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.table-empty i { font-size: 2rem; display: block; margin-bottom: 0.5rem; opacity: 0.4; }
+
+/* ── Add form ────────────────────────────────────────────── */
+.add-form-card {
+  position: sticky;
+  top: 80px;
+}
+
+/* ── ESTILOS NUEVOS PARA LAS FOTOS ───────────────────────── */
+.dog-thumbnail {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+.dog-thumbnail-placeholder {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border-color);
+  font-size: 1.2rem;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="admin-hero">
+  <div class="container">
+    <h1 class="admin-hero__title">
+      <i class="bi bi-shield-check me-2" style="color: var(--accent);"></i>
+      Panel de Administración
+    </h1>
+    <p class="admin-hero__subtitle">
+      Gestión del catálogo de perritos y registro de adopciones
+    </p>
+  </div>
+</div>
+
+<div class="container pb-5">
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-4">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--orange">🐶</div>
+        <div>
+          <div class="stat-card__value">{{ dogs|length }}</div>
+          <div class="stat-card__label">Total perritos</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--green">🏠</div>
+        <div>
+          <div class="stat-card__value">{{ adoptions|length }}</div>
+          <div class="stat-card__label">Adoptados</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--brown">❤️</div>
+        <div>
+          <div class="stat-card__value">{{ dogs|selectattr('adopted', 'equalto', False)|list|length }}</div>
+          <div class="stat-card__label">Disponibles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <div class="col-lg-8">
+
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-table me-2"></i>Catálogo de Perros</h2>
+        <span class="section-badge">{{ dogs|length }} registros</span>
+      </div>
+
+      <div class="panel-card mb-4">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Foto</th> <th>Nombre</th>
+              <th>Raza</th>
+              <th>Edad</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if dogs %}
+              {% for dog in dogs %}
+              <tr>
+                <td><span class="id-chip">#{{ dog.id }}</span></td>
+                
+                <td>
+                  {% if dog.photo %}
+                    <img src="{{ url_for('static', filename='uploads/dogs/' ~ dog.photo) }}" alt="Foto de {{ dog.name }}" class="dog-thumbnail">
+                  {% else %}
+                    <div class="dog-thumbnail-placeholder" title="Sin foto"><i class="bi bi-camera"></i></div>
+                  {% endif %}
+                </td>
+
+                <td><strong>{{ dog.name }}</strong></td>
+                <td class="text-muted-custom">{{ dog.breed }}</td>
+                <td>
+                  <span style="font-family: monospace;">{{ dog.age }}a</span>
+                </td>
+                <td>
+                  {% if dog.adopted %}
+                    <span class="badge-adopted"><i class="bi bi-check-circle-fill me-1"></i>Adoptado</span>
+                  {% else %}
+                    <span class="badge-available"><i class="bi bi-heart me-1"></i>Disponible</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if not dog.adopted %}
+                    <form
+                      action="{{ url_for('eliminar_perro', dog_id=dog.id) }}"
+                      method="POST"
+                      style="display:inline;"
+                      onsubmit="return confirm('¿Eliminar a {{ dog.name }} del catálogo?')"
+                    >
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                      </button>
+                    </form>
+                  {% else %}
+                    <span class="text-muted-custom" style="font-size:0.85rem; font-family:monospace;">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="7"><div class="table-empty"><i class="bi bi-inbox"></i>No hay perros en el catálogo</div></td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if adoptions %}
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-journal-check me-2"></i>Registros de Adopciones</h2>
+        <span class="section-badge">{{ adoptions|length }} registros</span>
+      </div>
+
+      <div class="panel-card">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Adoptante</th>
+              <th>Cédula / DUI</th>
+              <th>Dirección</th>
+              <th>Perro</th>
+              <th>Raza</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in adoptions %}
+            <tr>
+              <td>
+                <div class="fw-bold">{{ a[0] }} {{ a[1] }}</div>
+              </td>
+              <td>
+                <span style="font-family: monospace; font-size: 0.82rem; color: var(--text-muted);">{{ a[2] }}</span>
+              </td>
+              <td class="text-muted-custom" style="font-size: 0.85rem; max-width: 180px;">
+                <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ a[3] }}">
+                  {{ a[3] }}
+                </span>
+              </td>
+              <td><strong>{{ a[4] }}</strong></td>
+              <td class="text-muted-custom" style="font-size: 0.85rem;">{{ a[5] }}</td>
+              <td>
+                <span class="badge-adopted"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+    </div><div class="col-lg-4">
+      <div class="add-form-card">
+        <div class="section-header">
+          <h2 class="section-title"><i class="bi bi-plus-circle me-2"></i>Agregar Perrito</h2>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-card__body">
+            <p class="text-muted-custom mb-4" style="font-size: 0.88rem;">
+              Completa los datos para añadir un nuevo perrito al catálogo de adopciones.
+            </p>
+            
+            <form action="{{ url_for('agregar_perro') }}" method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label class="form-label" for="add-name">Nombre del perrito</label>
+                <input
+                  type="text"
+                  id="add-name"
+                  name="name"
+                  class="form-control"
+                  required
+                  placeholder="Ej. Fido"
+                  autocomplete="off"
+                >
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="add-breed">Raza</label>
+                <input
+                  type="text"
+                  id="add-breed"
+                  name="breed"
+                  class="form-control"
+                  required
+                  placeholder="Ej. Beagle"
+                  autocomplete="off"
+                >
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="add-age">Edad (años)</label>
+                <input
+                  type="number"
+                  id="add-age"
+                  name="age"
+                  class="form-control"
+                  required
+                  min="0"
+                  max="25"
+                  placeholder="Ej. 2"
+                >
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label" for="add-photo">Foto (Opcional)</label>
+                <input
+                  type="file"
+                  id="add-photo"
+                  name="photo"
+                  class="form-control"
+                  accept="image/png, image/jpeg, image/jpg"
+                >
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-plus-lg me-2"></i>Agregar al catálogo
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="mt-3 p-3" style="background: var(--accent-soft); border-radius: 10px; border: 1px solid var(--border-color);">
+          <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">
+            <i class="bi bi-info-circle me-1 text-warning"></i>
+            Los perros adoptados <strong>no pueden eliminarse</strong> del sistema para mantener el historial de adopciones intacto.
+          </p>
+        </div>
+      </div>
+    </div></div></div>{% endblock %}

@@ -1,0 +1,6 @@
+# Este directorio almacena las fotos de los perros subidas por el administrador.
+# Las imágenes se guardan con el formato: {dog_id}_{nombre_seguro}.{ext}
+# Ejemplo: 3_luna.jpg, 12_firulais.png
+#
+# Este archivo existe para que git rastree la carpeta vacía.
+# Las imágenes reales están ignoradas via .gitignore.

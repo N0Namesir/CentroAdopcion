@@ -1,0 +1,182 @@
+{# ═══════════════════════════════════════════════════════════════
+   macros.html — Biblioteca de macros Jinja2 para AdoptaPets
+   Uso: {% from 'components/macros.html' import card_perro, badge_estado %}
+   ═══════════════════════════════════════════════════════════════ #}
+
+
+{# ──────────────────────────────────────────────────────────────
+   MACRO: card_perro(perro)
+   Card de adopción con borde sutil, badge en esquina superior
+   derecha y botón grande centrado al fondo.
+   Parámetros:
+     perro.id      — ID del perro (int)
+     perro.name    — Nombre (str)
+     perro.breed   — Raza (str)
+     perro.age     — Edad en años (int)
+     perro.adopted — Estado (bool, por defecto False)
+   ────────────────────────────────────────────────────────────── #}
+{% macro card_perro(perro) %}
+<div class="col">
+  <div class="adopt-card h-100">
+
+    <!-- Imagen / emoji con badge de estado -->
+    <div class="adopt-card__img-wrap position-relative">
+      <div class="adopt-card__emoji" role="img" aria-label="Perro">🐶</div>
+      <div class="position-absolute top-0 end-0 m-2">
+        {{ badge_estado(perro.adopted if perro.adopted is defined else False) }}
+      </div>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="adopt-card__body">
+      <h5 class="adopt-card__name">{{ perro.name }}</h5>
+      <p class="adopt-card__breed">
+        <i class="bi bi-tag-fill me-1"></i>{{ perro.breed }}
+      </p>
+      <span class="adopt-card__age">
+        <i class="bi bi-clock me-1"></i>
+        {{ perro.age }} año{% if perro.age != 1 %}s{% endif %}
+      </span>
+    </div>
+
+    <!-- Footer: CTA -->
+    <div class="adopt-card__footer">
+      {% if not (perro.adopted if perro.adopted is defined else False) %}
+        <a
+          href="{{ url_for('form_adopcion', dog_id=perro.id) }}"
+          class="btn btn-primary adopt-card__cta"
+        >
+          <i class="bi bi-heart-fill me-2"></i>Adoptar a {{ perro.name }}
+        </a>
+      {% else %}
+        <button class="btn adopt-card__adopted-btn" disabled>
+          <i class="bi bi-check-circle-fill me-2"></i>Ya tiene hogar 🎉
+        </button>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .adopt-card {
+    background:    var(--surface);
+    border:        1px solid var(--border-color);
+    border-radius: var(--radius-card);
+    overflow:      hidden;
+    display:       flex;
+    flex-direction: column;
+    box-shadow:    var(--shadow-card);
+    transition:    transform var(--transition), box-shadow var(--transition);
+  }
+  .adopt-card:hover {
+    transform:  translateY(-6px);
+    box-shadow: var(--shadow-hover);
+  }
+  .adopt-card__img-wrap {
+    background:    linear-gradient(135deg, var(--accent-soft) 0%, #FFE0B0 100%);
+    min-height:    160px;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .adopt-card__emoji {
+    font-size:  4.5rem;
+    line-height: 1;
+    filter:     drop-shadow(0 4px 12px rgba(0,0,0,0.10));
+    transition: transform var(--transition);
+  }
+  .adopt-card:hover .adopt-card__emoji {
+    transform: scale(1.12) rotate(-5deg);
+  }
+  .adopt-card__body {
+    padding:  1.25rem 1.25rem 0.75rem;
+    flex:     1;
+  }
+  .adopt-card__name {
+    font-family: var(--font-display);
+    font-size:   1.25rem;
+    font-weight: 900;
+    color:       var(--accent-deeper);
+    margin-bottom: 0.25rem;
+  }
+  .adopt-card__breed {
+    font-size: 0.85rem;
+    color:     var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .adopt-card__age {
+    display:     inline-block;
+    font-size:   0.78rem;
+    font-weight: 700;
+    background:  var(--accent-soft);
+    color:       var(--accent-deeper);
+    padding:     3px 10px;
+    border-radius: 20px;
+  }
+  .adopt-card__footer {
+    padding: 1rem 1.25rem 1.25rem;
+  }
+  .adopt-card__cta {
+    width:       100%;
+    font-size:   0.95rem;
+    padding:     10px 16px;
+    text-align:  center;
+  }
+  .adopt-card__adopted-btn {
+    width:        100%;
+    background:   var(--cream);
+    color:        var(--text-muted);
+    border:       1px solid var(--border-color);
+    font-weight:  700;
+    font-family:  var(--font-body);
+    padding:      10px 16px;
+    cursor:       not-allowed;
+    opacity:      1 !important;
+    font-size:    0.88rem;
+  }
+</style>
+{% endmacro %}
+
+
+{# ──────────────────────────────────────────────────────────────
+   MACRO: badge_estado(adopted)
+   Badge indicando disponibilidad, para usar dentro de cards.
+   ────────────────────────────────────────────────────────────── #}
+{% macro badge_estado(adopted) %}
+  {% if adopted %}
+    <span class="badge-adopted">
+      <i class="bi bi-check-circle-fill me-1"></i>Adoptado
+    </span>
+  {% else %}
+    <span class="badge-available">
+      <i class="bi bi-heart me-1"></i>Disponible
+    </span>
+  {% endif %}
+{% endmacro %}
+
+
+{# ──────────────────────────────────────────────────────────────
+   MACRO: alert_box(mensaje, tipo='warning', dismissible=True)
+   Alert Bootstrap reutilizable.
+   tipos: success | danger | warning | info
+   ────────────────────────────────────────────────────────────── #}
+{% macro alert_box(mensaje, tipo='warning', dismissible=True) %}
+{% set icons = {
+  'success': 'check-circle-fill',
+  'danger':  'exclamation-triangle-fill',
+  'warning': 'exclamation-circle-fill',
+  'info':    'info-circle-fill'
+} %}
+<div
+  class="alert alert-{{ tipo }} {% if dismissible %}alert-dismissible fade show{% endif %} d-flex align-items-start gap-2 rounded-3"
+  role="alert"
+>
+  <i class="bi bi-{{ icons.get(tipo, 'info-circle-fill') }} flex-shrink-0 mt-1"></i>
+  <div>{{ mensaje }}</div>
+  {% if dismissible %}
+    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+  {% endif %}
+</div>
+{% endmacro %}

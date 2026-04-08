@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Adoptar a {{ dog.name }}{% endblock %}
+
+{% block content %}
+<a href="/" class="btn btn-secondary" style="margin-bottom: 28px;">← Volver al catálogo</a>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; margin-top: 8px;">
+
+    <!-- Info del perro -->
+    <div class="card" style="text-align: center; height: fit-content; padding: 0; overflow: hidden;">
+        <!-- Foto -->
+        <div style="
+            height: 200px;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        ">
+            {% if dog.photo_url %}
+            <img
+                src="{{ dog.photo_url }}"
+                alt="Foto de {{ dog.name }}"
+                style="width: 100%; height: 100%; object-fit: cover;"
+            >
+            {% else %}
+            <span style="font-size: 4rem;">🐶</span>
+            {% endif %}
+        </div>
+
+        <div style="padding: 20px;">
+            <div style="font-size: 1.4rem; font-weight: bold;">{{ dog.name }}</div>
+            <div style="color: var(--muted); font-family: monospace; font-size: 0.85rem; margin-top: 6px;">{{ dog.breed }}</div>
+            <div style="font-family: monospace; font-size: 0.85rem; color: var(--muted); margin-top: 4px;">
+                {{ dog.age }} año{% if dog.age != 1 %}s{% endif %}
+            </div>
+            <div style="margin-top: 16px; padding: 10px; background: var(--accent-light); border-radius: 6px; font-size: 0.8rem; color: var(--accent); font-family: monospace;">
+                disponible
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card">
+        <h1 style="font-size: 1.4rem; margin-bottom: 6px;">Tus datos de adoptante</h1>
+        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 28px;">Completa el formulario para registrar la adopción.</p>
+
+        <form action="/confirmar_adopcion" method="POST">
+            <input type="hidden" name="dog_id" value="{{ dog.id }}">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="field">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" name="name" required placeholder="Juan">
+                </div>
+                <div class="field">
+                    <label for="lastname">Apellido</label>
+                    <input type="text" id="lastname" name="lastname" required placeholder="Pérez">
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="id_card">Cédula / DUI</label>
+                <input type="text" id="id_card" name="id_card" required placeholder="00000000-0">
+            </div>
+
+            <div class="field">
+                <label for="address">Dirección</label>
+                <input type="text" id="address" name="address" required placeholder="Colonia, ciudad, departamento">
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 14px; font-size: 1rem; margin-top: 8px;">
+                Confirmar adopción de {{ dog.name }}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

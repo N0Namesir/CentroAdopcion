@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 480px; margin: 60px auto; text-align: center; padding: 48px;">
+    <div style="font-size: 3rem; margin-bottom: 20px;">⚠️</div>
+    <h1 style="font-size: 1.4rem; margin-bottom: 12px;">Algo salió mal</h1>
+    <p style="color: var(--muted); margin-bottom: 32px;">{{ mensaje }}</p>
+    <a href="/" class="btn btn-secondary">← Volver al inicio</a>
+</div>
+{% endblock %}
