@@ -263,7 +263,7 @@
                   <td><span class="id-chip">#{{ dog.id }}</span></td>
                   <td>
                     {% if dog.photo %}
-                      <img src="{{ url_for('routes.static', filename='uploads/dogs/' ~ dog.photo) }}" alt="Foto de {{ dog.name }}" class="dog-thumb">
+                      <img src="{{ url_for('static', filename='uploads/dogs/' ~ dog.photo) }}" alt="Foto de {{ dog.name }}" class="dog-thumb">
                     {% else %}
                       <div class="dog-thumb-placeholder" title="Sin foto"><i class="bi bi-camera"></i></div>
                     {% endif %}

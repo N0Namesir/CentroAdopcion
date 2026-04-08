@@ -101,7 +101,7 @@ def agregar_perro():
         if all_dogs:
             new_dog_id = all_dogs[0][0]  # ORDER BY id DESC → primero es el más nuevo
             filename = build_photo_filename(new_dog_id, file.filename)
-            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             database.update_dog_photo(new_dog_id, filename)
 
     flash(f'¡{name} fue agregado al catálogo exitosamente!', 'success')
@@ -144,7 +144,7 @@ def actualizar_foto(dog_id):
         delete_photo_file(old_photo)
 
     filename = build_photo_filename(dog_id, file.filename)
-    file.save(os.path.join(UPLOAD_FOLDER, filename))
+    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
     database.update_dog_photo(dog_id, filename)
     flash(f'Foto de {dog_data[1]} actualizada.', 'success')
     return redirect(url_for('routes.admin'))
