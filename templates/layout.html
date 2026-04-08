@@ -5,89 +5,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}AdoptaPets — Centro de Adopción{% endblock %}</title>
 
-  <!-- Bootstrap 5 CDN -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
-  <!-- Bootstrap Icons -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-  />
-  <!-- Google Fonts: DM Sans + DM Serif Display -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&display=swap" rel="stylesheet"/>
 
   <style>
     /* ═══════════════════════════════════════════════════════════
-       DESIGN TOKENS — Dark Mode Elegante
+       DESIGN TOKENS
     ═══════════════════════════════════════════════════════════ */
     :root {
-      /* Fondos */
       --bg-base:        #0d1117;
       --bg-card:        #161b22;
       --bg-card-hover:  #1c2230;
       --bg-elevated:    #1f2937;
       --bg-input:       #0d1117;
-
-      /* Bordes */
       --border:         #30363d;
       --border-active:  #58a6ff;
       --border-glow:    rgba(88, 166, 255, 0.4);
-
-      /* Texto */
       --text-primary:   #e6edf3;
       --text-secondary: #8b949e;
       --text-muted:     #6e7681;
       --text-accent:    #58a6ff;
-
-      /* Acento azul */
       --accent:         #58a6ff;
       --accent-dim:     rgba(88, 166, 255, 0.12);
       --accent-hover:   #79b8ff;
-
-      /* Semánticos */
       --green:          #3fb950;
       --green-dim:      rgba(63, 185, 80, 0.12);
       --red:            #f85149;
       --red-dim:        rgba(248, 81, 73, 0.12);
       --amber:          #d29922;
       --amber-dim:      rgba(210, 153, 34, 0.12);
-
-      /* Tipografía */
       --font-display:   'DM Serif Display', Georgia, serif;
       --font-body:      'DM Sans', system-ui, sans-serif;
-
-      /* Dimensiones */
       --radius-sm:      6px;
       --radius-md:      10px;
       --radius-lg:      16px;
       --radius-xl:      20px;
-
-      /* Sombras */
       --shadow-sm:      0 1px 3px rgba(0,0,0,0.4);
       --shadow-card:    0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px var(--border);
       --shadow-glow:    0 0 20px rgba(88,166,255,0.15);
       --shadow-hover:   0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px var(--border-active);
-
-      /* Transiciones */
       --ease:           cubic-bezier(0.4, 0, 0.2, 1);
       --duration:       0.22s;
     }
 
-    /* ── RESET & BASE ──────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family:    var(--font-body);
@@ -98,30 +63,125 @@
       flex-direction: column;
       font-size:      15px;
       line-height:    1.6;
-
-      /* Subtle dot grid texture */
       background-image: radial-gradient(circle, #21262d 1px, transparent 1px);
       background-size: 28px 28px;
+      /* Page transition */
+      opacity: 1;
+      transition: opacity 0.18s var(--ease);
     }
+    body.page-leaving { opacity: 0; }
 
     main { flex: 1; }
+    h1, h2, h3, h4 { font-family: var(--font-display); color: var(--text-primary); }
+    a { color: var(--accent); text-decoration: none; transition: color var(--duration) var(--ease); }
+    a:hover { color: var(--accent-hover); }
+    ::selection { background: rgba(88,166,255,0.25); color: var(--text-primary); }
 
-    h1, h2, h3, h4 {
-      font-family: var(--font-display);
-      color: var(--text-primary);
+    /* ── SCROLL PROGRESS BAR ───────────────────────────────── */
+    #scroll-progress {
+      position:   fixed;
+      top:        0;
+      left:       0;
+      height:     2px;
+      width:      0%;
+      background: linear-gradient(90deg, var(--accent), #1a6fcc, var(--green));
+      z-index:    9999;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px rgba(88,166,255,0.6);
     }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
+    /* ── TOAST SYSTEM ──────────────────────────────────────── */
+    #toast-container {
+      position:   fixed;
+      bottom:     24px;
+      right:      24px;
+      z-index:    9000;
+      display:    flex;
+      flex-direction: column;
+      gap:        10px;
+      pointer-events: none;
+    }
+    .app-toast {
+      background:    var(--bg-card);
+      border:        1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding:       14px 18px;
+      min-width:     280px;
+      max-width:     360px;
+      display:       flex;
+      align-items:   flex-start;
+      gap:           12px;
+      box-shadow:    0 8px 32px rgba(0,0,0,0.5);
+      pointer-events: all;
+      animation: toastIn 0.35s var(--ease) both;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-toast::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      width: 100%;
+      background: var(--toast-color, var(--accent));
+      animation: toastTimer var(--toast-duration, 4s) linear forwards;
+      transform-origin: left;
+    }
+    @keyframes toastTimer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px) scale(0.95); } to { opacity: 1; transform: none; } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(20px) scale(0.9); } }
+    .app-toast.leaving { animation: toastOut 0.25s var(--ease) both; }
+    .toast-icon {
+      width:  36px; height: 36px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+      background: var(--toast-color-dim, var(--accent-dim));
+    }
+    .toast-body { flex: 1; }
+    .toast-title { font-weight: 700; font-size: 0.85rem; color: var(--text-primary); margin-bottom: 2px; }
+    .toast-msg   { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+    .toast-close {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; padding: 2px; font-size: 0.9rem; flex-shrink: 0;
       transition: color var(--duration) var(--ease);
     }
-    a:hover { color: var(--accent-hover); }
+    .toast-close:hover { color: var(--text-primary); }
 
-    ::selection {
-      background: rgba(88,166,255,0.25);
-      color: var(--text-primary);
+    /* ── MODAL DE CONFIRMACIÓN ─────────────────────────────── */
+    #confirm-modal {
+      position:   fixed;
+      inset:      0;
+      z-index:    8000;
+      display:    none;
+      align-items: center;
+      justify-content: center;
+      padding:    20px;
     }
+    #confirm-modal.active { display: flex; }
+    .confirm-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s var(--ease) both;
+    }
+    .confirm-dialog {
+      position:      relative;
+      background:    var(--bg-card);
+      border:        1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding:       32px;
+      max-width:     420px;
+      width:         100%;
+      box-shadow:    0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+      animation: dialogIn 0.3s var(--ease) both;
+      text-align: center;
+    }
+    @keyframes dialogIn { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+    .confirm-emoji { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .confirm-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: var(--text-primary); }
+    .confirm-msg   { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.6; }
+    .confirm-actions { display: flex; gap: 10px; justify-content: center; }
 
     /* ── BOOTSTRAP OVERRIDES ───────────────────────────────── */
     .form-control, .form-select {
@@ -131,8 +191,7 @@
       font-family:      var(--font-body);
       border-radius:    var(--radius-md) !important;
       padding:          10px 14px;
-      transition:       border-color var(--duration) var(--ease),
-                        box-shadow var(--duration) var(--ease);
+      transition:       border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
     }
     .form-control:focus, .form-select:focus {
       border-color: var(--border-active) !important;
@@ -141,253 +200,114 @@
     }
     .form-control::placeholder { color: var(--text-muted); }
     .form-label {
-      font-weight: 500;
-      font-size:   0.82rem;
-      color:       var(--text-secondary);
-      margin-bottom: 5px;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      font-weight: 500; font-size: 0.82rem; color: var(--text-secondary);
+      margin-bottom: 5px; letter-spacing: 0.02em; text-transform: uppercase;
     }
 
-    /* Botones */
     .btn {
-      font-family:   var(--font-body);
-      font-weight:   600;
+      font-family: var(--font-body); font-weight: 600;
       border-radius: var(--radius-md);
-      transition:    all var(--duration) var(--ease);
+      transition: all var(--duration) var(--ease);
       letter-spacing: 0.01em;
     }
-    .btn-primary {
-      background:   var(--accent);
-      border-color: var(--accent);
-      color:        #0d1117;
-    }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #0d1117; }
     .btn-primary:hover, .btn-primary:focus {
-      background:   var(--accent-hover);
-      border-color: var(--accent-hover);
-      color:        #0d1117;
-      box-shadow:   0 0 16px rgba(88,166,255,0.35);
+      background: var(--accent-hover); border-color: var(--accent-hover); color: #0d1117;
+      box-shadow: 0 0 16px rgba(88,166,255,0.35);
     }
-    .btn-outline-primary {
-      color:        var(--accent);
-      border-color: var(--accent);
-    }
-    .btn-outline-primary:hover {
-      background:   var(--accent-dim);
-      color:        var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-    .btn-secondary {
-      background:   transparent;
-      border-color: var(--border);
-      color:        var(--text-secondary);
-    }
-    .btn-secondary:hover {
-      background:   var(--bg-elevated);
-      border-color: var(--border-active);
-      color:        var(--text-primary);
-    }
-    .btn-success {
-      background:   var(--green);
-      border-color: var(--green);
-      color:        #0d1117;
-      font-weight:  700;
-    }
-    .btn-success:hover {
-      background:   #46cc57;
-      border-color: #46cc57;
-      box-shadow:   0 0 16px rgba(63,185,80,0.35);
-      color:        #0d1117;
-    }
-    .btn-danger {
-      background:   transparent;
-      border-color: var(--red);
-      color:        var(--red);
-      font-size:    0.82rem;
-      padding:      5px 12px;
-    }
-    .btn-danger:hover {
-      background:   var(--red-dim);
-      box-shadow:   0 0 12px rgba(248,81,73,0.2);
-      color:        var(--red);
-    }
+    .btn-outline-primary { color: var(--accent); border-color: var(--accent); }
+    .btn-outline-primary:hover { background: var(--accent-dim); color: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-secondary { background: transparent; border-color: var(--border); color: var(--text-secondary); }
+    .btn-secondary:hover { background: var(--bg-elevated); border-color: var(--border-active); color: var(--text-primary); }
+    .btn-success { background: var(--green); border-color: var(--green); color: #0d1117; font-weight: 700; }
+    .btn-success:hover { background: #46cc57; border-color: #46cc57; box-shadow: 0 0 16px rgba(63,185,80,0.35); color: #0d1117; }
+    .btn-danger { background: transparent; border-color: var(--red); color: var(--red); font-size: 0.82rem; padding: 5px 12px; }
+    .btn-danger:hover { background: var(--red-dim); box-shadow: 0 0 12px rgba(248,81,73,0.2); color: var(--red); }
 
-    /* Tablas */
-    .table {
-      font-family: var(--font-body);
-      font-size:   0.88rem;
-      color:       var(--text-primary);
-      --bs-table-bg: transparent;
-      --bs-table-striped-bg: transparent;
-    }
-    .table th {
-      background:     var(--bg-base);
-      color:          var(--text-muted);
-      font-weight:    700;
-      font-size:      0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border-color:   var(--border);
-      padding:        12px 16px;
-    }
-    .table td {
-      border-color:   var(--border);
-      padding:        12px 16px;
-      vertical-align: middle;
-    }
-    .table tbody tr {
-      transition: background var(--duration) var(--ease);
-    }
-    .table tbody tr:hover {
-      background: rgba(88,166,255,0.04);
-    }
+    .table { font-family: var(--font-body); font-size: 0.88rem; color: var(--text-primary); --bs-table-bg: transparent; }
+    .table th { background: var(--bg-base); color: var(--text-muted); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; border-color: var(--border); padding: 12px 16px; }
+    .table td { border-color: var(--border); padding: 12px 16px; vertical-align: middle; }
+    .table tbody tr { transition: background var(--duration) var(--ease); }
+    .table tbody tr:hover { background: rgba(88,166,255,0.04); }
 
-    /* Badges */
-    .badge-available {
-      background:    var(--accent-dim);
-      color:         var(--accent);
-      border:        1px solid rgba(88,166,255,0.25);
-      font-size:     0.7rem;
-      font-weight:   700;
-      padding:       4px 10px;
-      border-radius: 20px;
-      font-family:   var(--font-body);
-      letter-spacing: 0.03em;
-    }
-    .badge-adopted {
-      background:    var(--green-dim);
-      color:         var(--green);
-      border:        1px solid rgba(63,185,80,0.25);
-      font-size:     0.7rem;
-      font-weight:   700;
-      padding:       4px 10px;
-      border-radius: 20px;
-      font-family:   var(--font-body);
-      letter-spacing: 0.03em;
-    }
+    .badge-available { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(88,166,255,0.25); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-family: var(--font-body); letter-spacing: 0.03em; }
+    .badge-adopted   { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(63,185,80,0.25);  font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-family: var(--font-body); letter-spacing: 0.03em; }
 
-    /* Alerts */
-    .alert {
-      border-radius: var(--radius-md);
-      font-family:   var(--font-body);
-    }
-
-    /* ── NAVBAR — Glassmorphism ─────────────────────────────── */
+    /* ── NAVBAR ─────────────────────────────────────────────── */
     .site-navbar {
-      background:       rgba(13, 17, 23, 0.80) !important;
-      backdrop-filter:  blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border-bottom:    1px solid var(--border);
-      padding:          10px 0;
-      position:         sticky;
-      top:              0;
-      z-index:          1030;
+      background:      rgba(13, 17, 23, 0.80) !important;
+      backdrop-filter: blur(16px) saturate(180%);
+      border-bottom:   1px solid var(--border);
+      padding:         10px 0;
+      position:        sticky;
+      top:             0;
+      z-index:         1030;
     }
-
     .navbar-brand {
-      font-family:     var(--font-display);
-      font-size:       1.35rem;
-      color:           var(--text-primary) !important;
-      letter-spacing:  -0.01em;
-      display:         flex;
-      align-items:     center;
-      gap:             10px;
+      font-family: var(--font-display); font-size: 1.35rem;
+      color: var(--text-primary) !important; letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 10px;
     }
-
     .brand-icon {
-      width:         34px;
-      height:        34px;
-      background:    linear-gradient(135deg, var(--accent), #1a6fcc);
-      border-radius: 8px;
-      display:       flex;
-      align-items:   center;
-      justify-content: center;
-      font-size:     0.95rem;
-      box-shadow:    0 0 12px rgba(88,166,255,0.3);
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), #1a6fcc);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; box-shadow: 0 0 12px rgba(88,166,255,0.3);
     }
-
     .nav-link {
-      color:         var(--text-secondary) !important;
-      font-weight:   500;
-      font-size:     0.88rem;
-      padding:       7px 14px !important;
-      border-radius: var(--radius-md);
-      transition:    all var(--duration) var(--ease);
-      display:       flex;
-      align-items:   center;
-      gap:           6px;
+      color: var(--text-secondary) !important; font-weight: 500; font-size: 0.88rem;
+      padding: 7px 14px !important; border-radius: var(--radius-md);
+      transition: all var(--duration) var(--ease); display: flex; align-items: center; gap: 6px;
     }
-    .nav-link:hover, .nav-link.active {
-      background: var(--accent-dim);
-      color:      var(--accent) !important;
+    .nav-link:hover, .nav-link.active { background: var(--accent-dim); color: var(--accent) !important; }
+    .nav-link.active { border: 1px solid rgba(88,166,255,0.2); }
+    .navbar-toggler { border-color: var(--border); }
+    .navbar-toggler-icon { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(139, 148, 158, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); }
+
+    /* Indicador de perros disponibles en navbar */
+    .nav-available-badge {
+      background: var(--green-dim); color: var(--green);
+      border: 1px solid rgba(63,185,80,0.25);
+      font-size: 0.65rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 20px;
+      font-family: var(--font-body);
     }
-    .nav-link.active {
-      border: 1px solid rgba(88,166,255,0.2);
+    .nav-available-badge .pulse-dot {
+      display: inline-block; width: 5px; height: 5px;
+      background: var(--green); border-radius: 50%;
+      animation: pulseDot 2s ease infinite;
+      margin-right: 3px; vertical-align: middle;
     }
-    .navbar-toggler {
-      border-color: var(--border);
-    }
-    .navbar-toggler-icon {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(139, 148, 158, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
     }
 
     /* ── FLASH ZONE ────────────────────────────────────────── */
-    .flash-zone {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
-    }
-    .flash-zone .alert {
-      border-radius: 0;
-      margin-bottom: 0;
-      border: none;
-      font-weight: 500;
-    }
+    .flash-zone { background: var(--bg-card); border-bottom: 1px solid var(--border); }
+    .flash-zone .alert { border-radius: 0; margin-bottom: 0; border: none; font-weight: 500; }
 
     /* ── FOOTER ────────────────────────────────────────────── */
     .site-footer {
-      background:   var(--bg-card);
-      border-top:   1px solid var(--border);
-      padding:      24px 0;
-      font-size:    0.82rem;
-      color:        var(--text-muted);
-      font-family:  var(--font-body);
-      margin-top:   auto;
+      background: var(--bg-card); border-top: 1px solid var(--border);
+      padding: 24px 0; font-size: 0.82rem; color: var(--text-muted);
+      font-family: var(--font-body); margin-top: auto;
     }
-    .site-footer a {
-      color: var(--text-secondary);
-      transition: color var(--duration) var(--ease);
-    }
+    .site-footer a { color: var(--text-secondary); transition: color var(--duration) var(--ease); }
     .site-footer a:hover { color: var(--accent); }
 
     /* ── ANIMATIONS ────────────────────────────────────────── */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-16px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(88,166,255,0.0); }
-      50%       { box-shadow: 0 0 20px rgba(88,166,255,0.2); }
-    }
+    @keyframes fadeInUp   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes pulseGlow  { 0%, 100% { box-shadow: 0 0 0 0 rgba(88,166,255,0.0); } 50% { box-shadow: 0 0 20px rgba(88,166,255,0.2); } }
 
-    .anim-fade-up   { animation: fadeInUp 0.45s var(--ease) both; }
-    .anim-fade-in   { animation: fadeIn   0.35s var(--ease) both; }
+    .anim-fade-up    { animation: fadeInUp 0.45s var(--ease) both; }
+    .anim-fade-in    { animation: fadeIn   0.35s var(--ease) both; }
     .anim-slide-left { animation: slideInLeft 0.4s var(--ease) both; }
-
-    /* Stagger delays */
-    .delay-1 { animation-delay: 0.05s; }
-    .delay-2 { animation-delay: 0.10s; }
-    .delay-3 { animation-delay: 0.15s; }
-    .delay-4 { animation-delay: 0.20s; }
-    .delay-5 { animation-delay: 0.25s; }
-    .delay-6 { animation-delay: 0.30s; }
+    .delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.10s; }
+    .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.20s; }
+    .delay-5 { animation-delay: 0.25s; } .delay-6 { animation-delay: 0.30s; }
 
     /* ── UTILITY ───────────────────────────────────────────── */
     .text-accent   { color: var(--accent) !important; }
@@ -395,20 +315,11 @@
     .text-muted-c  { color: var(--text-muted) !important; }
     .bg-card       { background: var(--bg-card) !important; }
     .border-dark-c { border-color: var(--border) !important; }
+    .divider       { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 24px 0;
-    }
-
-    /* Scrollbar estilizado */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-base); }
-    ::-webkit-scrollbar-thumb {
-      background:    var(--border);
-      border-radius: 3px;
-    }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
     {% block extra_styles %}{% endblock %}
@@ -416,41 +327,48 @@
 </head>
 <body>
 
+  <!-- ─── SCROLL PROGRESS ─────────────────────────────────── -->
+  <div id="scroll-progress"></div>
+
+  <!-- ─── TOAST CONTAINER ─────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <!-- ─── CONFIRM MODAL ───────────────────────────────────── -->
+  <div id="confirm-modal">
+    <div class="confirm-backdrop" id="confirm-backdrop"></div>
+    <div class="confirm-dialog">
+      <span class="confirm-emoji" id="confirm-emoji">🗑️</span>
+      <div class="confirm-title" id="confirm-title">¿Estás seguro?</div>
+      <div class="confirm-msg"   id="confirm-msg">Esta acción no se puede deshacer.</div>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" id="confirm-cancel" style="min-width:100px;">Cancelar</button>
+        <button class="btn btn-danger"    id="confirm-ok"     style="min-width:100px;"></button>
+      </div>
+    </div>
+  </div>
+
   <!-- ─── NAVBAR ──────────────────────────────────────────── -->
   <nav class="navbar navbar-expand-lg site-navbar">
     <div class="container">
-      <a class="navbar-brand" href="{{ url_for('index') }}">
+      <a class="navbar-brand" href="{{url_for('routes.index') }}">
         <span class="brand-icon">🐾</span>
         AdoptaPets
       </a>
 
-      <button
-        class="navbar-toggler border-0"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#mainNav"
-        aria-controls="mainNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-2 mt-lg-0">
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
-              href="{{ url_for('index') }}"
-            >
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('routes.index') }}">
               <i class="bi bi-grid-3x3-gap-fill"></i> Catálogo
+              {% block nav_badge %}{% endblock %}
             </a>
           </li>
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}"
-              href="{{ url_for('admin') }}"
-            >
+            <a class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}" href="{{ url_for('routes.admin') }}">
               <i class="bi bi-shield-fill-check"></i> Administración
             </a>
           </li>
@@ -464,10 +382,7 @@
     {% if messages %}
       <div class="flash-zone">
         {% for category, message in messages %}
-          <div
-            class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-0"
-            role="alert"
-          >
+          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mb-0" role="alert">
             <i class="bi bi-{% if category == 'success' %}check-circle-fill{% elif category in ['error','danger'] %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
             {{ message }}
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -487,25 +402,105 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-          <span style="font-family: var(--font-display); color: var(--text-secondary); font-size: 0.95rem;">
-            🐾 AdoptaPets
-          </span>
+          <span style="font-family: var(--font-display); color: var(--text-secondary); font-size: 0.95rem;">🐾 AdoptaPets</span>
           <span class="ms-2">— Cada perrito merece un hogar.</span>
         </div>
         <div class="col-md-6 text-center text-md-end">
-          <a href="{{ url_for('index') }}" class="me-3">Catálogo</a>
-          <a href="{{ url_for('admin') }}">Administración</a>
+          <a href="{{ url_for('routes.index') }}" class="me-3">Catálogo</a>
+          <a href="{{ url_for('routes.admin') }}">Administración</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- Bootstrap 5 JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmkZmZ9oqZnuWl+yQo/SHxRmEoV"
-    crossorigin="anonymous"
-  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmkZmZ9oqZnuWl+yQo/SHxRmEoV" crossorigin="anonymous"></script>
+
+  <script>
+    /* ── SCROLL PROGRESS BAR ───────────────────────────────── */
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const total    = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.width = total > 0 ? (scrolled / total * 100) + '%' : '0%';
+    }, { passive: true });
+
+    /* ── PAGE TRANSITIONS ──────────────────────────────────── */
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript') || link.target === '_blank') return;
+      if (link.hostname !== location.hostname) return;
+      e.preventDefault();
+      document.body.classList.add('page-leaving');
+      setTimeout(() => { location.href = href; }, 180);
+    });
+
+    /* ── TOAST SYSTEM ──────────────────────────────────────── */
+    const toastTypes = {
+      success: { icon: 'bi-check-circle-fill', color: 'var(--green)',  colorDim: 'var(--green-dim)' },
+      error:   { icon: 'bi-x-circle-fill',     color: 'var(--red)',    colorDim: 'var(--red-dim)' },
+      info:    { icon: 'bi-info-circle-fill',   color: 'var(--accent)', colorDim: 'var(--accent-dim)' },
+      warning: { icon: 'bi-exclamation-triangle-fill', color: 'var(--amber)', colorDim: 'var(--amber-dim)' },
+    };
+    window.showToast = function(title, msg, type = 'info', duration = 4000) {
+      const container = document.getElementById('toast-container');
+      const t = toastTypes[type] || toastTypes.info;
+      const el = document.createElement('div');
+      el.className = 'app-toast';
+      el.style.setProperty('--toast-color',     t.color);
+      el.style.setProperty('--toast-color-dim', t.colorDim);
+      el.style.setProperty('--toast-duration',  (duration / 1000) + 's');
+      el.innerHTML = `
+        <div class="toast-icon"><i class="bi ${t.icon}" style="color:${t.color};"></i></div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          ${msg ? `<div class="toast-msg">${msg}</div>` : ''}
+        </div>
+        <button class="toast-close" onclick="dismissToast(this.closest('.app-toast'))"><i class="bi bi-x"></i></button>
+      `;
+      container.appendChild(el);
+      setTimeout(() => dismissToast(el), duration);
+    };
+    window.dismissToast = function(el) {
+      if (!el || el.classList.contains('leaving')) return;
+      el.classList.add('leaving');
+      setTimeout(() => el.remove(), 250);
+    };
+
+    /* ── CONFIRM MODAL ─────────────────────────────────────── */
+    window.showConfirm = function({ emoji = '⚠️', title, msg, okLabel = 'Confirmar', okClass = 'btn-danger', onOk }) {
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-emoji').textContent = emoji;
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-msg').textContent   = msg;
+      const okBtn = document.getElementById('confirm-ok');
+      okBtn.textContent = okLabel;
+      okBtn.className   = 'btn ' + okClass;
+      modal.classList.add('active');
+
+      const closeModal = () => modal.classList.remove('active');
+      const handleOk   = () => { closeModal(); onOk && onOk(); };
+
+      document.getElementById('confirm-cancel').onclick = closeModal;
+      document.getElementById('confirm-backdrop').onclick = closeModal;
+      okBtn.onclick = handleOk;
+    };
+
+    /* ── AUTO-SHOW FLASH AS TOASTS ─────────────────────────── */
+    document.querySelectorAll('.flash-zone .alert').forEach(alert => {
+      const isSuccess = alert.classList.contains('alert-success');
+      const isDanger  = alert.classList.contains('alert-danger');
+      const msg = alert.textContent.trim().replace(/\s+/g, ' ');
+      setTimeout(() => {
+        showToast(
+          isSuccess ? '¡Éxito!' : isDanger ? 'Error' : 'Aviso',
+          msg.slice(0, 100),
+          isSuccess ? 'success' : isDanger ? 'error' : 'info'
+        );
+      }, 300);
+    });
+  </script>
 
   {% block extra_scripts %}{% endblock %}
 </body>
