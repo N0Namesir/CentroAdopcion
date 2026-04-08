@@ -1,171 +1,248 @@
 {% extends "layout.html" %}
-
 {% block title %}Administración — AdoptaPets{% endblock %}
 
 {% block extra_styles %}
-/* ── Hero de admin ───────────────────────────────────────── */
-.admin-hero {
-  background: linear-gradient(135deg, var(--accent-deeper) 0%, #3B2212 100%);
-  padding: 2.5rem 0 2rem;
-  margin-bottom: 2.5rem;
+
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
+.admin-header {
+  border-bottom: 1px solid var(--border);
+  background:    var(--bg-card);
+  padding:       32px 0 28px;
+  margin-bottom: 32px;
+  position:      relative;
+  overflow:      hidden;
 }
-.admin-hero__title {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 0.25rem;
+.admin-header::before {
+  content:  '';
+  position: absolute;
+  right:    -60px; top: -60px;
+  width:    300px; height: 300px;
+  background: radial-gradient(circle, rgba(88,166,255,0.06) 0%, transparent 65%);
+  pointer-events: none;
 }
-.admin-hero__subtitle {
-  color: rgba(255,255,255,0.65);
-  font-size: 0.95rem;
+.admin-header__breadcrumb {
+  font-size:   0.75rem;
+  color:       var(--text-muted);
+  margin-bottom: 8px;
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+}
+.admin-header__breadcrumb a {
+  color: var(--text-muted);
+}
+.admin-header__breadcrumb a:hover { color: var(--accent); }
+.admin-header__title {
+  font-family:   var(--font-display);
+  font-size:     clamp(1.6rem, 3.5vw, 2.2rem);
+  color:         var(--text-primary);
+  margin:        0 0 4px;
+  font-weight:   400;
+}
+.admin-header__sub {
+  font-size: 0.88rem;
+  color:     var(--text-secondary);
+  margin:    0;
 }
 
-/* ── Stat cards ──────────────────────────────────────────── */
+/* ── STAT CARDS ──────────────────────────────────────────────── */
 .stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-card);
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: var(--shadow-card);
+  background:    var(--bg-card);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding:       20px 22px;
+  display:       flex;
+  align-items:   center;
+  gap:           16px;
+  transition:    border-color var(--duration) var(--ease),
+                 box-shadow var(--duration) var(--ease);
+}
+.stat-card:hover {
+  border-color: var(--border-active);
+  box-shadow:   0 0 20px rgba(88,166,255,0.07);
 }
 .stat-card__icon {
-  width: 52px; height: 52px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
+  width:         48px;
+  height:        48px;
+  border-radius: var(--radius-md);
+  display:       flex;
+  align-items:   center;
   justify-content: center;
-  font-size: 1.5rem;
-  flex-shrink: 0;
+  font-size:     1.35rem;
+  flex-shrink:   0;
 }
-.stat-card__icon--orange { background: var(--accent-soft); }
-.stat-card__icon--green  { background: var(--green-light); }
-.stat-card__icon--brown  { background: #F3E8DC; }
+.stat-card__icon--blue   { background: var(--accent-dim);  border: 1px solid rgba(88,166,255,0.2); }
+.stat-card__icon--green  { background: var(--green-dim);   border: 1px solid rgba(63,185,80,0.2); }
+.stat-card__icon--amber  { background: var(--amber-dim);   border: 1px solid rgba(210,153,34,0.2); }
 .stat-card__value {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--accent-deeper);
-  line-height: 1;
+  font-family:  var(--font-display);
+  font-size:    2rem;
+  line-height:  1;
+  color:        var(--text-primary);
 }
 .stat-card__label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size:   0.75rem;
+  color:       var(--text-muted);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top:  3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-/* ── Section headers ─────────────────────────────────────── */
-.section-header {
-  display: flex;
+/* ── SECTION HEADERS ─────────────────────────────────────────── */
+.section-head {
+  display:     flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
 }
-.section-title {
+.section-head__title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--accent-deeper);
-  margin: 0;
-}
-.section-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: var(--accent-soft);
-  color: var(--accent-deeper);
-  padding: 3px 10px;
-  border-radius: 20px;
-}
-
-/* ── Panel cards ─────────────────────────────────────────── */
-.panel-card {
-  background: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-}
-.panel-card__body { padding: 1.5rem; }
-
-/* ── ID chip ─────────────────────────────────────────────── */
-.id-chip {
-  font-family: monospace;
-  font-size: 0.78rem;
-  background: var(--cream);
-  color: var(--text-muted);
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-}
-
-/* ── Empty table ─────────────────────────────────────────── */
-.table-empty {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-.table-empty i { font-size: 2rem; display: block; margin-bottom: 0.5rem; opacity: 0.4; }
-
-/* ── Add form ────────────────────────────────────────────── */
-.add-form-card {
-  position: sticky;
-  top: 80px;
-}
-
-/* ── ESTILOS NUEVOS PARA LAS FOTOS ───────────────────────── */
-.dog-thumbnail {
-  width: 45px;
-  height: 45px;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 1px solid var(--border-color);
-}
-.dog-thumbnail-placeholder {
-  width: 45px;
-  height: 45px;
-  border-radius: 8px;
-  background: var(--cream);
-  color: var(--text-muted);
-  display: flex;
+  font-size:   1.1rem;
+  color:       var(--text-primary);
+  margin:      0;
+  display:     flex;
   align-items: center;
-  justify-content: center;
-  border: 1px dashed var(--border-color);
-  font-size: 1.2rem;
+  gap:         8px;
 }
+.section-head__title i { color: var(--accent); font-size: 0.95rem; }
+.section-badge {
+  font-size:   0.7rem;
+  font-weight: 700;
+  background:  var(--accent-dim);
+  color:       var(--accent);
+  border:      1px solid rgba(88,166,255,0.2);
+  padding:     3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-body);
+}
+
+/* ── PANEL CARD ──────────────────────────────────────────────── */
+.panel-card {
+  background:    var(--bg-card);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow:      hidden;
+}
+.panel-card__body { padding: 22px; }
+
+/* ── TABLA — Thumbnail ───────────────────────────────────────── */
+.dog-thumb {
+  width:         40px;
+  height:        40px;
+  border-radius: var(--radius-md);
+  object-fit:    cover;
+  border:        1px solid var(--border);
+}
+.dog-thumb-placeholder {
+  width:           40px;
+  height:          40px;
+  border-radius:   var(--radius-md);
+  background:      var(--bg-base);
+  border:          1px dashed var(--border);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  color:           var(--text-muted);
+  font-size:       1rem;
+}
+
+/* ID chip */
+.id-chip {
+  font-family:   monospace;
+  font-size:     0.73rem;
+  background:    var(--bg-base);
+  color:         var(--text-muted);
+  padding:       3px 8px;
+  border-radius: var(--radius-sm);
+  border:        1px solid var(--border);
+  letter-spacing: 0.03em;
+}
+
+/* Empty tabla */
+.table-empty {
+  text-align:  center;
+  padding:     40px;
+  color:       var(--text-muted);
+  font-size:   0.88rem;
+}
+
+/* ── FORM ADD ────────────────────────────────────────────────── */
+.add-panel {
+  position: sticky;
+  top:      80px;
+}
+.add-panel .panel-card {
+  background: var(--bg-card);
+}
+.add-panel .form-control,
+.add-panel .form-select {
+  background: var(--bg-base) !important;
+}
+
+/* Sección de info */
+.info-box {
+  background:    rgba(88,166,255,0.05);
+  border:        1px solid rgba(88,166,255,0.15);
+  border-radius: var(--radius-md);
+  padding:       14px 16px;
+  font-size:     0.8rem;
+  color:         var(--text-secondary);
+  line-height:   1.6;
+}
+.info-box i { color: var(--accent); }
+
+/* ── UPLOAD PHOTO INLINE ─────────────────────────────────────── */
+.photo-action-row {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  flex-wrap:   wrap;
+}
+.photo-upload-btn {
+  font-size:    0.75rem;
+  padding:      4px 10px;
+  border-radius: var(--radius-sm) !important;
+  white-space: nowrap;
+}
+
+/* ── ADOPTIONS TABLE ─────────────────────────────────────────── */
+.adoptions-section { margin-top: 28px; }
+
 {% endblock %}
 
 {% block content %}
 
-<div class="admin-hero">
+<!-- ── PAGE HEADER ────────────────────────────────────────────── -->
+<div class="admin-header anim-fade-in">
   <div class="container">
-    <h1 class="admin-hero__title">
-      <i class="bi bi-shield-check me-2" style="color: var(--accent);"></i>
+    <div class="admin-header__breadcrumb">
+      <a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i> Inicio</a>
+      <i class="bi bi-chevron-right" style="font-size:0.65rem;"></i>
+      <span>Administración</span>
+    </div>
+    <h1 class="admin-header__title">
+      <i class="bi bi-shield-fill-check me-2" style="color: var(--accent);"></i>
       Panel de Administración
     </h1>
-    <p class="admin-hero__subtitle">
-      Gestión del catálogo de perritos y registro de adopciones
-    </p>
+    <p class="admin-header__sub">Gestión del catálogo y registro de adopciones</p>
   </div>
 </div>
 
 <div class="container pb-5">
 
+  <!-- ── STATS ROW ──────────────────────────────────────────── -->
   <div class="row g-3 mb-4">
-    <div class="col-sm-4">
+    <div class="col-sm-4 anim-fade-up delay-1">
       <div class="stat-card">
-        <div class="stat-card__icon stat-card__icon--orange">🐶</div>
+        <div class="stat-card__icon stat-card__icon--blue">🐶</div>
         <div>
           <div class="stat-card__value">{{ dogs|length }}</div>
           <div class="stat-card__label">Total perritos</div>
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 anim-fade-up delay-2">
       <div class="stat-card">
         <div class="stat-card__icon stat-card__icon--green">🏠</div>
         <div>
@@ -174,9 +251,9 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 anim-fade-up delay-3">
       <div class="stat-card">
-        <div class="stat-card__icon stat-card__icon--brown">❤️</div>
+        <div class="stat-card__icon stat-card__icon--amber">❤️</div>
         <div>
           <div class="stat-card__value">{{ dogs|selectattr('adopted', 'equalto', False)|list|length }}</div>
           <div class="stat-card__label">Disponibles</div>
@@ -185,135 +262,227 @@
     </div>
   </div>
 
+  <!-- ── MAIN CONTENT ──────────────────────────────────────── -->
   <div class="row g-4">
 
-    <div class="col-lg-8">
+    <!-- LEFT: Catálogo table + Adoptions -->
+    <div class="col-lg-8 anim-fade-up delay-2">
 
-      <div class="section-header">
-        <h2 class="section-title"><i class="bi bi-table me-2"></i>Catálogo de Perros</h2>
+      <!-- Catálogo de Perros -->
+      <div class="section-head">
+        <h2 class="section-head__title">
+          <i class="bi bi-table"></i>Catálogo de Perros
+        </h2>
         <span class="section-badge">{{ dogs|length }} registros</span>
       </div>
 
       <div class="panel-card mb-4">
-        <table class="table table-hover align-middle mb-0">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Foto</th> <th>Nombre</th>
-              <th>Raza</th>
-              <th>Edad</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% if dogs %}
-              {% for dog in dogs %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
               <tr>
-                <td><span class="id-chip">#{{ dog.id }}</span></td>
-                
-                <td>
-                  {% if dog.photo %}
-                    <img src="{{ url_for('static', filename='uploads/dogs/' ~ dog.photo) }}" alt="Foto de {{ dog.name }}" class="dog-thumbnail">
-                  {% else %}
-                    <div class="dog-thumbnail-placeholder" title="Sin foto"><i class="bi bi-camera"></i></div>
-                  {% endif %}
-                </td>
-
-                <td><strong>{{ dog.name }}</strong></td>
-                <td class="text-muted-custom">{{ dog.breed }}</td>
-                <td>
-                  <span style="font-family: monospace;">{{ dog.age }}a</span>
-                </td>
-                <td>
-                  {% if dog.adopted %}
-                    <span class="badge-adopted"><i class="bi bi-check-circle-fill me-1"></i>Adoptado</span>
-                  {% else %}
-                    <span class="badge-available"><i class="bi bi-heart me-1"></i>Disponible</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if not dog.adopted %}
-                    <form
-                      action="{{ url_for('eliminar_perro', dog_id=dog.id) }}"
-                      method="POST"
-                      style="display:inline;"
-                      onsubmit="return confirm('¿Eliminar a {{ dog.name }} del catálogo?')"
-                    >
-                      <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash me-1"></i>Eliminar
-                      </button>
-                    </form>
-                  {% else %}
-                    <span class="text-muted-custom" style="font-size:0.85rem; font-family:monospace;">—</span>
-                  {% endif %}
-                </td>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Raza</th>
+                <th>Edad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
-              {% endfor %}
-            {% else %}
-              <tr><td colspan="7"><div class="table-empty"><i class="bi bi-inbox"></i>No hay perros en el catálogo</div></td></tr>
-            {% endif %}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {% if dogs %}
+                {% for dog in dogs %}
+                <tr>
+                  <td><span class="id-chip">#{{ dog.id }}</span></td>
+
+                  <td>
+                    {% if dog.photo %}
+                      <img
+                        src="{{ url_for('static', filename='uploads/dogs/' ~ dog.photo) }}"
+                        alt="Foto de {{ dog.name }}"
+                        class="dog-thumb"
+                      >
+                    {% else %}
+                      <div class="dog-thumb-placeholder" title="Sin foto">
+                        <i class="bi bi-camera"></i>
+                      </div>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    <strong style="color: var(--text-primary);">{{ dog.name }}</strong>
+                  </td>
+                  <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ dog.breed }}</td>
+                  <td>
+                    <span style="font-family: monospace; font-size: 0.82rem; color: var(--text-muted);">
+                      {{ dog.age }}a
+                    </span>
+                  </td>
+                  <td>
+                    {% if dog.adopted %}
+                      <span class="badge-adopted">
+                        <i class="bi bi-check-circle-fill me-1"></i>Adoptado
+                      </span>
+                    {% else %}
+                      <span class="badge-available">
+                        <i class="bi bi-heart me-1"></i>Disponible
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="photo-action-row">
+                      <!-- Upload/cambiar foto -->
+                      <form
+                        action="{{ url_for('actualizar_foto', dog_id=dog.id) }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        style="display:inline-flex; align-items:center; gap:4px;"
+                      >
+                        <input
+                          type="file"
+                          name="photo"
+                          accept="image/*"
+                          style="display:none;"
+                          id="file-{{ dog.id }}"
+                          onchange="this.form.submit()"
+                        >
+                        <label
+                          for="file-{{ dog.id }}"
+                          class="btn btn-outline-primary photo-upload-btn"
+                          style="cursor:pointer; margin:0;"
+                          title="Subir foto"
+                        >
+                          <i class="bi bi-camera-fill"></i>
+                        </label>
+                      </form>
+
+                      <!-- Quitar foto -->
+                      {% if dog.photo %}
+                      <form
+                        action="{{ url_for('quitar_foto', dog_id=dog.id) }}"
+                        method="POST"
+                        style="display:inline;"
+                      >
+                        <button
+                          type="submit"
+                          class="btn btn-secondary photo-upload-btn"
+                          title="Quitar foto"
+                          style="font-size:0.75rem; padding:4px 8px;"
+                        >
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      </form>
+                      {% endif %}
+
+                      <!-- Eliminar perro -->
+                      {% if not dog.adopted %}
+                      <form
+                        action="{{ url_for('eliminar_perro', dog_id=dog.id) }}"
+                        method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirm('¿Eliminar a {{ dog.name }} del catálogo?')"
+                      >
+                        <button type="submit" class="btn btn-danger photo-upload-btn">
+                          <i class="bi bi-trash3-fill me-1"></i>Eliminar
+                        </button>
+                      </form>
+                      {% else %}
+                      <span style="color: var(--text-muted); font-family: monospace; font-size: 0.8rem;">—</span>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="7">
+                    <div class="table-empty">
+                      <i class="bi bi-inbox" style="font-size:1.8rem; display:block; margin-bottom:8px; opacity:0.3;"></i>
+                      No hay perros en el catálogo
+                    </div>
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
       </div>
 
+      <!-- Adoptions -->
       {% if adoptions %}
-      <div class="section-header">
-        <h2 class="section-title"><i class="bi bi-journal-check me-2"></i>Registros de Adopciones</h2>
-        <span class="section-badge">{{ adoptions|length }} registros</span>
-      </div>
+      <div class="adoptions-section">
+        <div class="section-head">
+          <h2 class="section-head__title">
+            <i class="bi bi-journal-check"></i>Registros de Adopciones
+          </h2>
+          <span class="section-badge">{{ adoptions|length }} registros</span>
+        </div>
 
-      <div class="panel-card">
-        <table class="table table-hover mb-0">
-          <thead>
-            <tr>
-              <th>Adoptante</th>
-              <th>Cédula / DUI</th>
-              <th>Dirección</th>
-              <th>Perro</th>
-              <th>Raza</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for a in adoptions %}
-            <tr>
-              <td>
-                <div class="fw-bold">{{ a[0] }} {{ a[1] }}</div>
-              </td>
-              <td>
-                <span style="font-family: monospace; font-size: 0.82rem; color: var(--text-muted);">{{ a[2] }}</span>
-              </td>
-              <td class="text-muted-custom" style="font-size: 0.85rem; max-width: 180px;">
-                <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ a[3] }}">
-                  {{ a[3] }}
-                </span>
-              </td>
-              <td><strong>{{ a[4] }}</strong></td>
-              <td class="text-muted-custom" style="font-size: 0.85rem;">{{ a[5] }}</td>
-              <td>
-                <span class="badge-adopted"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="panel-card">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Adoptante</th>
+                  <th>Cédula / DUI</th>
+                  <th>Dirección</th>
+                  <th>Perro</th>
+                  <th>Raza</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in adoptions %}
+                <tr>
+                  <td>
+                    <div style="font-weight: 600; color: var(--text-primary);">{{ a[0] }} {{ a[1] }}</div>
+                  </td>
+                  <td>
+                    <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">{{ a[2] }}</span>
+                  </td>
+                  <td style="font-size: 0.82rem; color: var(--text-secondary); max-width: 180px;">
+                    <span style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="{{ a[3] }}">
+                      {{ a[3] }}
+                    </span>
+                  </td>
+                  <td><strong style="color: var(--text-primary);">{{ a[4] }}</strong></td>
+                  <td style="font-size: 0.82rem; color: var(--text-secondary);">{{ a[5] }}</td>
+                  <td>
+                    <span class="badge-adopted">
+                      <i class="bi bi-check-circle-fill me-1"></i>Completado
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
       {% endif %}
 
-    </div><div class="col-lg-4">
-      <div class="add-form-card">
-        <div class="section-header">
-          <h2 class="section-title"><i class="bi bi-plus-circle me-2"></i>Agregar Perrito</h2>
+    </div><!-- / col-lg-8 -->
+
+    <!-- RIGHT: Add dog form -->
+    <div class="col-lg-4 anim-fade-up delay-3">
+      <div class="add-panel">
+
+        <div class="section-head">
+          <h2 class="section-head__title">
+            <i class="bi bi-plus-circle-fill"></i>Agregar Perrito
+          </h2>
         </div>
 
         <div class="panel-card">
           <div class="panel-card__body">
-            <p class="text-muted-custom mb-4" style="font-size: 0.88rem;">
-              Completa los datos para añadir un nuevo perrito al catálogo de adopciones.
+
+            <p style="font-size: 0.83rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;">
+              Añade un nuevo perrito al catálogo de adopciones completando los campos a continuación.
             </p>
-            
+
             <form action="{{ url_for('agregar_perro') }}" method="POST" enctype="multipart/form-data">
+
               <div class="mb-3">
                 <label class="form-label" for="add-name">Nombre del perrito</label>
                 <input
@@ -326,6 +495,7 @@
                   autocomplete="off"
                 >
               </div>
+
               <div class="mb-3">
                 <label class="form-label" for="add-breed">Raza</label>
                 <input
@@ -338,6 +508,7 @@
                   autocomplete="off"
                 >
               </div>
+
               <div class="mb-3">
                 <label class="form-label" for="add-age">Edad (años)</label>
                 <input
@@ -351,30 +522,36 @@
                   placeholder="Ej. 2"
                 >
               </div>
-              
+
               <div class="mb-4">
-                <label class="form-label" for="add-photo">Foto (Opcional)</label>
+                <label class="form-label" for="add-photo">Foto (opcional)</label>
                 <input
                   type="file"
                   id="add-photo"
                   name="photo"
                   class="form-control"
-                  accept="image/png, image/jpeg, image/jpg"
+                  accept="image/png, image/jpeg, image/jpg, image/webp"
                 >
               </div>
 
-              <button type="submit" class="btn btn-primary w-100">
+              <button type="submit" class="btn btn-primary w-100" style="padding: 12px;">
                 <i class="bi bi-plus-lg me-2"></i>Agregar al catálogo
               </button>
+
             </form>
           </div>
         </div>
 
-        <div class="mt-3 p-3" style="background: var(--accent-soft); border-radius: 10px; border: 1px solid var(--border-color);">
-          <p class="mb-0" style="font-size: 0.8rem; color: var(--text-muted);">
-            <i class="bi bi-info-circle me-1 text-warning"></i>
-            Los perros adoptados <strong>no pueden eliminarse</strong> del sistema para mantener el historial de adopciones intacto.
-          </p>
+        <!-- Info note -->
+        <div class="info-box mt-3">
+          <i class="bi bi-info-circle-fill me-1"></i>
+          Los perros <strong>adoptados no pueden eliminarse</strong> para mantener el historial de adopciones intacto.
         </div>
+
       </div>
-    </div></div></div>{% endblock %}
+    </div><!-- / col-lg-4 -->
+
+  </div><!-- / row -->
+</div><!-- / container -->
+
+{% endblock %}

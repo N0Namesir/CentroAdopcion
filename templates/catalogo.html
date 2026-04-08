@@ -1,89 +1,337 @@
-{% extends "base.html" %}
-{% block title %}Perritos en adopción — Centro de Adopción{% endblock %}
+{% extends "layout.html" %}
+{% block title %}Perritos en adopción — AdoptaPets{% endblock %}
+
+{% block extra_styles %}
+
+/* ── HERO SECTION ──────────────────────────────────────────── */
+.catalog-hero {
+  padding: 64px 0 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.catalog-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(88,166,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.catalog-hero__eyebrow {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            6px;
+  font-family:    var(--font-body);
+  font-size:      0.75rem;
+  font-weight:    700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color:          var(--accent);
+  background:     var(--accent-dim);
+  border:         1px solid rgba(88,166,255,0.2);
+  padding:        5px 14px;
+  border-radius:  20px;
+  margin-bottom:  20px;
+}
+.catalog-hero__title {
+  font-family:    var(--font-display);
+  font-size:      clamp(2.2rem, 5vw, 3.2rem);
+  font-weight:    400;
+  color:          var(--text-primary);
+  margin-bottom:  12px;
+  line-height:    1.15;
+}
+.catalog-hero__title em {
+  font-style:  italic;
+  color:       var(--accent);
+}
+.catalog-hero__subtitle {
+  font-size:    1rem;
+  color:        var(--text-secondary);
+  max-width:    460px;
+  margin:       0 auto 32px;
+  line-height:  1.7;
+}
+.catalog-hero__count {
+  display:     inline-flex;
+  align-items: center;
+  gap:         8px;
+  font-size:   0.82rem;
+  color:       var(--text-muted);
+  font-family: var(--font-body);
+}
+.catalog-hero__count .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulseGlow 2s ease infinite;
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* ── DOG GRID ──────────────────────────────────────────────── */
+.dogs-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap:                   24px;
+  padding-bottom:        64px;
+}
+
+/* ── DOG CARD ──────────────────────────────────────────────── */
+.dog-card {
+  background:    var(--bg-card);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow:      hidden;
+  display:       flex;
+  flex-direction: column;
+  transition:    transform var(--duration) var(--ease),
+                 box-shadow var(--duration) var(--ease),
+                 border-color var(--duration) var(--ease);
+  position:      relative;
+}
+
+.dog-card:hover {
+  transform:    translateY(-6px) scale(1.01);
+  box-shadow:   var(--shadow-hover), 0 0 40px rgba(88,166,255,0.08);
+  border-color: var(--border-active);
+}
+
+/* Línea de acento superior que aparece en hover */
+.dog-card::before {
+  content:    '';
+  position:   absolute;
+  top:        0; left: 0; right: 0;
+  height:     2px;
+  background: linear-gradient(90deg, var(--accent), #1a6fcc);
+  opacity:    0;
+  transition: opacity var(--duration) var(--ease);
+}
+.dog-card:hover::before { opacity: 1; }
+
+/* Imagen/placeholder */
+.dog-card__media {
+  height:          220px;
+  position:        relative;
+  overflow:        hidden;
+  background:      var(--bg-base);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+.dog-card__media img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+.dog-card:hover .dog-card__media img {
+  transform: scale(1.06);
+}
+.dog-card__placeholder {
+  font-size:  5rem;
+  line-height: 1;
+  filter:     grayscale(20%);
+  transition: transform 0.4s var(--ease), filter var(--duration) var(--ease);
+  user-select: none;
+}
+.dog-card:hover .dog-card__placeholder {
+  transform: scale(1.12) rotate(-4deg);
+  filter:    none;
+}
+
+/* Overlay sutil en la imagen */
+.dog-card__media::after {
+  content:    '';
+  position:   absolute;
+  bottom:     0; left: 0; right: 0;
+  height:     80px;
+  background: linear-gradient(to top, rgba(22,27,34,0.8), transparent);
+  pointer-events: none;
+}
+
+/* Badge de raza (sobre la imagen) */
+.dog-card__breed-badge {
+  position:      absolute;
+  bottom:        12px;
+  left:          12px;
+  z-index:       2;
+  background:    rgba(13,17,23,0.85);
+  backdrop-filter: blur(8px);
+  border:        1px solid var(--border);
+  color:         var(--text-secondary);
+  font-family:   var(--font-body);
+  font-size:     0.72rem;
+  font-weight:   600;
+  padding:       4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+
+/* Badge de edad */
+.dog-card__age-badge {
+  position:    absolute;
+  top:         12px;
+  right:       12px;
+  z-index:     2;
+  background:  var(--accent-dim);
+  border:      1px solid rgba(88,166,255,0.25);
+  color:       var(--accent);
+  font-family: var(--font-body);
+  font-size:   0.72rem;
+  font-weight: 700;
+  padding:     4px 10px;
+  border-radius: 20px;
+}
+
+/* Cuerpo de la tarjeta */
+.dog-card__body {
+  padding:        20px 22px 16px;
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+}
+.dog-card__name {
+  font-family:   var(--font-display);
+  font-size:     1.35rem;
+  color:         var(--text-primary);
+  margin:        0;
+  line-height:   1.2;
+}
+.dog-card__meta {
+  font-size:  0.8rem;
+  color:      var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Footer de la tarjeta */
+.dog-card__footer {
+  padding: 0 22px 22px;
+}
+.dog-card__cta {
+  width:       100%;
+  font-size:   0.9rem;
+  padding:     11px 16px;
+  text-align:  center;
+  border-radius: var(--radius-md) !important;
+}
+
+/* ── EMPTY STATE ───────────────────────────────────────────── */
+.empty-state {
+  text-align:  center;
+  padding:     80px 40px;
+  max-width:   480px;
+  margin:      0 auto;
+}
+.empty-state__icon {
+  font-size:     4rem;
+  margin-bottom: 24px;
+  opacity:       0.6;
+  display:       block;
+}
+.empty-state__title {
+  font-family:   var(--font-display);
+  font-size:     1.6rem;
+  margin-bottom: 12px;
+  color:         var(--text-primary);
+}
+.empty-state__text {
+  color:         var(--text-secondary);
+  margin-bottom: 32px;
+  line-height:   1.7;
+}
+
+{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 32px;">
-    <h1>Perritos disponibles</h1>
-    <h2>Cada uno espera a alguien como tú</h2>
-</div>
 
-{% if dogs %}
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<section class="catalog-hero anim-fade-in">
+  <div class="container">
+    <div class="catalog-hero__eyebrow">
+      <span class="dot"></span>
+      Centro de Adopción Activo
+    </div>
+    <h1 class="catalog-hero__title">
+      Perritos esperando<br>
+      <em>un hogar como el tuyo</em>
+    </h1>
+    <p class="catalog-hero__subtitle">
+      Cada uno tiene una historia. Tú puedes escribir el siguiente capítulo.
+    </p>
+    {% if dogs %}
+    <div class="catalog-hero__count">
+      <span class="dot"></span>
+      {{ dogs|length }} perrito{% if dogs|length != 1 %}s{% endif %} disponible{% if dogs|length != 1 %}s{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
 
-<div style="
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 24px;
-    margin-top: 8px;
-">
+<!-- ── CATÁLOGO ───────────────────────────────────────────────── -->
+<section class="container">
+  {% if dogs %}
+
+  <div class="dogs-grid">
     {% for dog in dogs %}
-    <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+    <div class="dog-card anim-fade-up delay-{{ loop.index if loop.index <= 6 else 6 }}">
 
-        <!-- Foto o placeholder -->
-        <div style="
-            height: 200px;
-            background: var(--accent-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        ">
-            {% if dog.photo_url %}
-            <img
-                src="{{ dog.photo_url }}"
-                alt="Foto de {{ dog.name }}"
-                style="width: 100%; height: 100%; object-fit: cover;"
-            >
-            {% else %}
-            <span style="font-size: 5rem; line-height: 1; user-select: none;">🐶</span>
-            {% endif %}
+      <!-- Media -->
+      <div class="dog-card__media">
+        {% if dog.photo_url %}
+          <img src="{{ dog.photo_url }}" alt="Foto de {{ dog.name }}">
+        {% else %}
+          <span class="dog-card__placeholder">🐶</span>
+        {% endif %}
 
-            <!-- Badge raza -->
-            <span style="
-                position: absolute;
-                bottom: 10px;
-                left: 10px;
-                background: rgba(255,255,255,0.92);
-                border-radius: 20px;
-                padding: 3px 10px;
-                font-family: monospace;
-                font-size: 0.75rem;
-                color: var(--muted);
-                backdrop-filter: blur(4px);
-            ">{{ dog.breed }}</span>
-        </div>
+        <!-- Badges sobre imagen -->
+        <span class="dog-card__breed-badge">
+          <i class="bi bi-tag-fill me-1"></i>{{ dog.breed }}
+        </span>
+        <span class="dog-card__age-badge">
+          {{ dog.age }}a
+        </span>
+      </div>
 
-        <!-- Info -->
-        <div style="padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 12px;">
-            <div>
-                <div style="font-size: 1.2rem; font-weight: bold;">{{ dog.name }}</div>
-                <div style="font-family: monospace; font-size: 0.82rem; color: var(--muted); margin-top: 2px;">
-                    {{ dog.age }} año{% if dog.age != 1 %}s{% endif %}
-                </div>
-            </div>
+      <!-- Cuerpo -->
+      <div class="dog-card__body">
+        <h2 class="dog-card__name">{{ dog.name }}</h2>
+        <p class="dog-card__meta">
+          <i class="bi bi-heart-pulse me-1" style="color: var(--red);"></i>
+          Listo para un nuevo hogar
+        </p>
+      </div>
 
-            <a
-                href="/adoptar/{{ dog.id }}"
-                class="btn btn-primary"
-                style="margin-top: auto; text-align: center;"
-            >
-                Adoptar a {{ dog.name }}
-            </a>
-        </div>
+      <!-- CTA -->
+      <div class="dog-card__footer">
+        <a
+          href="{{ url_for('form_adopcion', dog_id=dog.id) }}"
+          class="btn btn-primary dog-card__cta"
+        >
+          <i class="bi bi-house-heart-fill me-2"></i>Adoptar a {{ dog.name }}
+        </a>
+      </div>
+
     </div>
     {% endfor %}
-</div>
+  </div>
 
-{% else %}
+  {% else %}
 
-<div class="card" style="text-align: center; padding: 64px 40px; max-width: 480px; margin: 60px auto;">
-    <div style="font-size: 4rem; margin-bottom: 20px;">🏠</div>
-    <h1 style="font-size: 1.4rem; margin-bottom: 10px;">Todos tienen hogar</h1>
-    <p style="color: var(--muted); margin-bottom: 28px;">
-        ¡Todos los perritos han sido adoptados! Vuelve pronto para conocer a los nuevos.
+  <!-- Empty State -->
+  <div class="empty-state anim-fade-up">
+    <span class="empty-state__icon">🏠</span>
+    <h2 class="empty-state__title">¡Todos tienen hogar!</h2>
+    <p class="empty-state__text">
+      Todos los perritos han sido adoptados. Vuelve pronto para conocer a los nuevos.
     </p>
-    <a href="/admin" class="btn btn-secondary">Ir al panel de administración</a>
-</div>
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">
+      <i class="bi bi-shield-fill-check me-2"></i>Ir al panel de administración
+    </a>
+  </div>
 
-{% endif %}
+  {% endif %}
+</section>
+
 {% endblock %}
