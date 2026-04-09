@@ -11,8 +11,23 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./static/uploads/dogs:/app/static/uploads/dogs
 
-# ESTO ES LO QUE FALTA (sin espacios a la izquierda):
+  # --- ESTO ES LO QUE DEBES AGREGAR ---
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "5000:5000" # O el puerto que use tu app (FastAPI suele ser 8000)
+    volumes:
+      - .:/app
+      - ./static/uploads/dogs:/app/static/uploads/dogs
+    environment:
+      - DB_HOST=db
+      - DB_USER=user_perro
+      - DB_PASSWORD=password123
+      - DB_NAME=CentroAdopcion
+
 volumes:
   db_data:
