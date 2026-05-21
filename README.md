@@ -77,6 +77,7 @@ Persistencia de Datos: Los datos de MariaDB se almacenan en un volumen de Docker
 Sincronización de Código: Hemos configurado un volumen que vincula tu carpeta local con /app dentro del contenedor. Si Flask está en modo Debug, la mayoría de los cambios que guardes en tus archivos .py o .html se verán reflejados al instante sin reiniciar el contenedor.
 
 Variables de Entorno: Las credenciales de la base de datos están centralizadas en el archivo docker-compose.yml.
+
 Preview de la app
 
 
